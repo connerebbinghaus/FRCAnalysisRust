@@ -1,6 +1,7 @@
 use team::Alliances;
 use ::{TBA, Result};
-#[derive(Serialize, Deserialize, Debug)]
+
+#[derive(Serialize, Deserialize, Debug, Ord, PartialOrd, Eq, PartialEq)]
 pub enum CompLevel {
     #[serde(rename = "qm")]
     QualificationMatch,
@@ -359,6 +360,16 @@ impl Match {
 
     pub fn from_event(mut tba: TBA, key: String) -> Result<Vec<Match>> {
         tba.get("/event/".to_owned() + &key + "/matches")
+    }
+
+    pub fn team_keys(&self) -> Option<Vec<&String>> {
+        if let Some(ref alliances) = self.alliances {
+            let mut ret = Vec::new();
+            ret.extend(&alliances.blue.team_keys[..]);
+            ret.extend(&alliances.red.team_keys[..]);
+            return Some(ret);
+        }
+        return None;
     }
 }
 

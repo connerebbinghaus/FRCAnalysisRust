@@ -1,3 +1,5 @@
+#![feature(custom_attribute)]
+
 extern crate hyper;
 extern crate log;
 extern crate hyper_tls;
@@ -7,6 +9,7 @@ extern crate serde_json;
 #[macro_use]
 extern crate serde_derive;
 extern crate tokio_core;
+extern crate chrono;
 
 use futures::future;
 use hyper_tls::HttpsConnector;
@@ -19,6 +22,8 @@ use std::result;
 
 pub mod matches;
 pub mod team;
+pub mod event;
+pub mod district;
 
 const BASE_URL: &str = "https://www.thebluealliance.com/api/v3";
 
