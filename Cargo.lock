@@ -2,21 +2,8 @@
 name = "FRCAnalysis"
 version = "0.1.0"
 dependencies = [
- "TheBlueAlliance 0.1.0",
  "futures 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "TheBlueAlliance"
-version = "0.1.0"
-dependencies = [
- "bytes 0.4.8 (registry+https://github.com/rust-lang/crates.io-index)",
- "futures 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "hyper 0.12.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "hyper-tls 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde_derive 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde_json 1.0.20 (registry+https://github.com/rust-lang/crates.io-index)",
+ "the_blue_alliance 0.1.0",
 ]
 
 [[package]]
@@ -609,6 +596,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "rand 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "remove_dir_all 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "the_blue_alliance"
+version = "0.1.0"
+dependencies = [
+ "futures 0.1.21 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hyper 0.12.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hyper-tls 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "log 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_derive 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.20 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tokio-core 0.1.17 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

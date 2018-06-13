@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FRCAnalysis.iml" filepath="$PROJECT_DIR$/FRCAnalysis.iml" />
-      <module fileurl="file://$PROJECT_DIR$/TheBlueAlliance/TheBlueAlliance.iml" filepath="$PROJECT_DIR$/TheBlueAlliance/TheBlueAlliance.iml" />
+      <module fileurl="file://$PROJECT_DIR$/the_blue_alliance/the_blue_alliance.iml" filepath="$PROJECT_DIR$/the_blue_alliance/the_blue_alliance.iml" />
     </modules>
   </component>
 </project>
