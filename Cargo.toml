@@ -1,9 +1,9 @@
 [package]
-name = "FRCAnalysis"
+name = "frc-analysis"
 version = "0.1.0"
 authors = ["Conner Ebbinghaus <connerebbinghaus@gmail.com>"]
 
 [dependencies]
 
-[dependencies.the_blue_alliance]
-path = "the_blue_alliance"
+[dependencies.the-blue-alliance]
+path = "the-blue-alliance"

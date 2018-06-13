@@ -1,11 +1,4 @@
 [[package]]
-name = "FRCAnalysis"
-version = "0.1.0"
-dependencies = [
- "the_blue_alliance 0.1.0",
-]
-
-[[package]]
 name = "arrayvec"
 version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -127,6 +120,13 @@ dependencies = [
 name = "foreign-types-shared"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "frc-analysis"
+version = "0.1.0"
+dependencies = [
+ "the-blue-alliance 0.1.0",
+]
 
 [[package]]
 name = "fuchsia-zircon"
@@ -525,7 +525,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "the_blue_alliance"
+name = "the-blue-alliance"
 version = "0.1.0"
 dependencies = [
  "chrono 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)",
