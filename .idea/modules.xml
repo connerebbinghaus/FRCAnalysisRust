@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/frc-analysis.iml" filepath="$PROJECT_DIR$/frc-analysis.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FRCAnalysisRust.iml" filepath="$PROJECT_DIR$/FRCAnalysisRust.iml" />
       <module fileurl="file://$PROJECT_DIR$/the-blue-alliance/the-blue-alliance.iml" filepath="$PROJECT_DIR$/the-blue-alliance/the-blue-alliance.iml" />
     </modules>
   </component>

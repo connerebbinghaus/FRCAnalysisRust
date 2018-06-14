@@ -354,11 +354,11 @@ pub struct Match {
 }
 
 impl Match {
-    pub fn from_key(mut tba: TBA, key: String) -> Result<Match> {
+    pub fn from_key(tba: &mut TBA, key: String) -> Result<Match> {
         tba.get("/match/".to_owned() + &key)
     }
 
-    pub fn from_event(mut tba: TBA, key: String) -> Result<Vec<Match>> {
+    pub fn in_event(tba: &mut TBA, key: String) -> Result<Vec<Match>> {
         tba.get("/event/".to_owned() + &key + "/matches")
     }
 

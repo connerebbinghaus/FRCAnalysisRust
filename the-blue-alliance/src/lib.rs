@@ -1,5 +1,3 @@
-#![feature(custom_attribute)]
-
 extern crate hyper;
 extern crate log;
 extern crate hyper_tls;
@@ -24,6 +22,7 @@ pub mod matches;
 pub mod team;
 pub mod event;
 pub mod district;
+mod cache;
 
 const BASE_URL: &str = "https://www.thebluealliance.com/api/v3";
 
@@ -35,6 +34,14 @@ pub enum Error {
 
 pub type Result<T> = result::Result<T, Error>;
 
+
+/// Stores the TBA auth key, HTTP client, and tokio event loop for use in requesting data from the api.
+/// # Examples
+/// ```
+/// let tba = TBA::new("xxxxxxxx"); // Get API key from TBA account page.
+/// let team = Team::from_key(tba, "frc4453");
+/// assert_eq!(team.number, 4453);
+/// ```
 pub struct TBA {
     auth_key: &'static str,
     client: hyper::Client<HttpsConnector<HttpConnector>>,
@@ -42,6 +49,7 @@ pub struct TBA {
 }
 
 impl TBA {
+    /// Creates a new TBA struct from an TBA auth key.
     pub fn new(auth_key: &'static str) -> TBA {
         TBA {
             auth_key,
@@ -50,6 +58,8 @@ impl TBA {
         }
     }
 
+    /// Downloads JSON from the specified TBA api path, deserializing it into type `T`.
+    /// Used internally.
     fn get<T>(&mut self, url: String) -> Result<T>
         where for<'de> T: serde::Deserialize<'de>
     {
@@ -67,13 +77,15 @@ impl TBA {
                         v.extend(&chunk[..]);
                         future::ok::<_, Error>(v)
                     }).and_then(|chunks| {
+                        println!("Data: {}", String::from_utf8(chunks.clone()).unwrap());
                         future::result::<_, Error>(TBA::parse_json(chunks).map_err(|e| Error::Json(e)))
                     })
             });
         self.event_loop.run(fut)
     }
 
-
+    /// Deserializes the JSON contained in the vector into type `T`.
+    /// Used internally by `TBA::get`.
     fn parse_json<T>(body: Vec<u8>) -> serde_json::Result<T>
         where for<'de> T: Deserialize<'de>,
     {
