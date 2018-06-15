@@ -5,28 +5,6 @@ use ::matches::Match;
 use ::chrono::{DateTime, Utc, Local};
 use std::collections::HashMap;
 
-
-pub enum Query {
-    Team,
-    Match,
-    Event,
-    District,
-
-    FromKey(String, Query),
-
-    Paginated(u32, Query),
-
-    InYear(u32, Query),
-
-    DistrictsFor(Query),
-    EventsFor(Query),
-    MatchesFor(Query),
-    TeamsFor(Query),
-
-    Simple(Query),
-    Keys(Query),
-}
-
 pub enum CachedData {
     Team(Team),
     Teams(Vec<Team>),
@@ -38,7 +16,7 @@ pub enum CachedData {
     Matches(Vec<Match>)
 }
 
-struct CachedDataTimed {
+pub struct CachedDataTimed {
     data: CachedData,
     last_modified: DateTime<Local>,
     expires: DateTime<Local>
@@ -57,15 +35,21 @@ impl CachedDataTimed {
 
 
 pub struct CacheStore {
-    store: HashMap<Query, CachedDataTimed>
+    store: HashMap<String, CachedDataTimed>
 }
 
 impl CacheStore {
-    pub fn cache(&mut self, query: Query, data: &ToCache) {
+    pub fn new() -> CacheStore {
+        CacheStore {
+            store: HashMap::new(),
+        }
+    }
+
+    pub fn cache(&mut self, query: String, data: &ToCache) {
         self.store.insert(query, CachedDataTimed::cache(data));
     }
 
-    pub fn query(&self, query: Query) -> Option<&ToCache> {
+    pub fn query(&self, query: String) -> Option<&CachedDataTimed> {
         if Some(dat) = self.store.get(&query) {
 
         }
@@ -114,8 +98,8 @@ impl ToCache for Vec<Event> {
 }
 
 impl ToCache for Match {
-    fn cache(&self) -> CachedData {
-        CachedData::Match(*self)
+    fn cache(self) -> CachedData {
+        CachedData::Match(self)
     }
 }
 

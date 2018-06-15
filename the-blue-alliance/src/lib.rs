@@ -45,7 +45,8 @@ pub type Result<T> = result::Result<T, Error>;
 pub struct TBA {
     auth_key: &'static str,
     client: hyper::Client<HttpsConnector<HttpConnector>>,
-    event_loop: tokio_core::reactor::Core
+    event_loop: tokio_core::reactor::Core,
+    cache: cache::CacheStore,
 }
 
 impl TBA {
@@ -54,7 +55,8 @@ impl TBA {
         TBA {
             auth_key,
             client: Client::builder().build(HttpsConnector::new(4).expect("Cannot create HttpsConnector")),
-            event_loop: tokio_core::reactor::Core::new().expect("Cannot create tokio event loop")
+            event_loop: tokio_core::reactor::Core::new().expect("Cannot create tokio event loop"),
+            cache: cache::CacheStore::new(),
         }
     }
 
@@ -63,23 +65,30 @@ impl TBA {
     fn get<T>(&mut self, url: String) -> Result<T>
         where for<'de> T: serde::Deserialize<'de>
     {
-        let request: Request<hyper::Body> = Request::builder()
+        let mut requestBuilder = Request::builder()
             .method(hyper::Method::GET)
             .uri(String::from(BASE_URL) + &url)
-            .header("X-TBA-Auth-Key", self.auth_key)
-            .body(hyper::Body::empty()).expect("Failed to construct request.");
+            .header("X-TBA-Auth-Key", self.auth_key);
+
+
+        if let Some(c) = self.cache.query(url) {
+            c.last_modified.
+        }
+
+        let request: Request<hyper::Body>  = requestBuilder.body(hyper::Body::empty()).expect("Failed to construct request.");
+
         let fut = self.client.request(request).map_err(|e| Error::Hyper(e))
             .and_then(|res| {
                 println!("Response: {}", res.status());
 
-                res.into_body().map_err(|e| Error::Hyper(e))
-                    .fold(Vec::new(), |mut v, chunk| {
+                (head, body) = res.into_parts();
+                self.event_loop.run(body.fold(Vec::new(), |mut v, chunk| {
                         v.extend(&chunk[..]);
                         future::ok::<_, Error>(v)
                     }).and_then(|chunks| {
                         println!("Data: {}", String::from_utf8(chunks.clone()).unwrap());
                         future::result::<_, Error>(TBA::parse_json(chunks).map_err(|e| Error::Json(e)))
-                    })
+                    }));
             });
         self.event_loop.run(fut)
     }
