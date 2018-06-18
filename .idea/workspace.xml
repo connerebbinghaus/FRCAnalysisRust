@@ -22,8 +22,17 @@
       <file leaf-file-name="lib.rs" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/the-blue-alliance/src/lib.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="47" column="35" lean-forward="true" selection-start-line="47" selection-start-column="35" selection-end-line="47" selection-end-column="35" />
+            <state relative-caret-position="187">
+              <caret line="50" column="3" lean-forward="true" selection-start-line="50" selection-start-column="3" selection-end-line="50" selection-end-column="3" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".travis.yml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.travis.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="17">
+              <caret line="1" column="12" selection-start-line="1" selection-start-column="12" selection-end-line="1" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -159,6 +168,7 @@
         <option value="$PROJECT_DIR$/src/main.rs" />
         <option value="$PROJECT_DIR$/the-blue-alliance/src/district.rs" />
         <option value="$PROJECT_DIR$/the-blue-alliance/src/cache.rs" />
+        <option value="$PROJECT_DIR$/.travis.yml" />
         <option value="$PROJECT_DIR$/the-blue-alliance/src/lib.rs" />
       </list>
     </option>
@@ -350,7 +360,21 @@
       <option name="project" value="LOCAL" />
       <updated>1529333564998</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Fixed docs for real.">
+      <created>1529333852484</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1529333852484</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Let travis cache dependencies.">
+      <created>1529333919723</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1529333919723</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -451,7 +475,9 @@
     <MESSAGE value="Travis stuff." />
     <MESSAGE value="Fixed docs." />
     <MESSAGE value="Merge remote-tracking branch 'origin/development' into development" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge remote-tracking branch 'origin/development' into development" />
+    <MESSAGE value="Fixed docs for real." />
+    <MESSAGE value="Let travis cache dependencies." />
+    <option name="LAST_COMMIT_MESSAGE" value="Let travis cache dependencies." />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/the-blue-alliance/src/lib.rs">
@@ -802,10 +828,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.travis.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="12" selection-start-line="1" selection-start-column="12" selection-end-line="1" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/the-blue-alliance/src/lib.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="47" column="35" lean-forward="true" selection-start-line="47" selection-start-column="35" selection-end-line="47" selection-end-column="35" />
+        <state relative-caret-position="187">
+          <caret line="50" column="3" lean-forward="true" selection-start-line="50" selection-start-column="3" selection-end-line="50" selection-end-column="3" />
         </state>
       </provider>
     </entry>
