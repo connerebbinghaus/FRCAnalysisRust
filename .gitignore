@@ -1,3 +1,5 @@
+.idea
+*.iml
 /the-blue-alliance/target
 /target
 **/*.rs.bk
