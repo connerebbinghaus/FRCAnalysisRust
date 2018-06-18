@@ -45,9 +45,13 @@ pub type Result<T> = result::Result<T, Error>;
 /// Stores the TBA auth key, HTTP client, and tokio event loop for use in requesting data from the api.
 /// # Examples
 /// ```
+/// extern crate the_blue_alliance;
+/// use the_blue_alliance::TBA;
+/// use the_blue_alliance::team::Team;
+///
 /// let tba = TBA::new("xxxxxxxx"); // Get API key from TBA account page.
-/// let team = Team::from_key(tba, "frc4453");
-/// assert_eq!(team.number, 4453);
+/// let team = Team::from_key(&mut tba, "frc4453");
+/// assert_eq!(team.team_number, 4453);
 /// ```
 pub struct TBA {
     auth_key: &'static str,

@@ -1,20 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3ad8a341-8ce8-431b-81de-3c48a24a3f6f" name="Default" comment="Caching finally works.&#10;&#10;Gave up on futures because they are evil.&#10;For #1.">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+    <list default="true" id="3ad8a341-8ce8-431b-81de-3c48a24a3f6f" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/the-blue-alliance/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/the-blue-alliance/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/the-blue-alliance/src/cache.rs" beforeDir="false" afterPath="$PROJECT_DIR$/the-blue-alliance/src/cache.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/the-blue-alliance/src/district.rs" beforeDir="false" afterPath="$PROJECT_DIR$/the-blue-alliance/src/district.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/the-blue-alliance/src/event.rs" beforeDir="false" afterPath="$PROJECT_DIR$/the-blue-alliance/src/event.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/the-blue-alliance/src/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/the-blue-alliance/src/lib.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/the-blue-alliance/src/matches.rs" beforeDir="false" afterPath="$PROJECT_DIR$/the-blue-alliance/src/matches.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/the-blue-alliance/src/team.rs" beforeDir="false" afterPath="$PROJECT_DIR$/the-blue-alliance/src/team.rs" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <ignored path="$PROJECT_DIR$/out/" />
@@ -30,11 +18,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="lib.rs" pinned="false" current-in-tab="false">
+      <file leaf-file-name="lib.rs" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/the-blue-alliance/src/lib.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="437">
-              <caret line="81" column="9" lean-forward="true" selection-start-line="81" selection-start-column="9" selection-end-line="81" selection-end-column="9" />
+            <state relative-caret-position="238">
+              <caret line="50" column="3" selection-start-line="50" selection-start-column="3" selection-end-line="50" selection-end-column="3" />
             </state>
           </provider>
         </entry>
@@ -51,7 +39,7 @@
       <file leaf-file-name="main.rs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
+            <state relative-caret-position="238">
               <caret line="14" column="39" selection-start-line="14" selection-start-column="39" selection-end-line="14" selection-end-column="39" />
             </state>
           </provider>
@@ -84,11 +72,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="cache.rs" pinned="false" current-in-tab="true">
+      <file leaf-file-name="cache.rs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/the-blue-alliance/src/cache.rs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1168">
-              <caret line="108" column="20" selection-start-line="108" selection-start-column="20" selection-end-line="108" selection-end-column="20" />
+            <state relative-caret-position="80">
+              <caret line="44" column="42" lean-forward="true" selection-start-line="44" selection-start-column="42" selection-end-line="44" selection-end-column="42" />
               <folding>
                 <element signature="e#3225#3226#0" expanded="true" />
                 <element signature="e#3262#3263#0" expanded="true" />
@@ -159,8 +147,8 @@
         <option value="$PROJECT_DIR$/Cargo.toml" />
         <option value="$PROJECT_DIR$/src/main.rs" />
         <option value="$PROJECT_DIR$/the-blue-alliance/src/district.rs" />
-        <option value="$PROJECT_DIR$/the-blue-alliance/src/lib.rs" />
         <option value="$PROJECT_DIR$/the-blue-alliance/src/cache.rs" />
+        <option value="$PROJECT_DIR$/the-blue-alliance/src/lib.rs" />
       </list>
     </option>
   </component>
@@ -226,7 +214,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Cargo Command.test [the-blue-alliance]">
     <configuration default="true" type="Application" factoryName="Application">
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
     </configuration>
@@ -236,6 +224,14 @@
       <option name="nocapture" value="true" />
       <option name="backtrace" value="SHORT" />
       <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+    </configuration>
+    <configuration name="test [the-blue-alliance]" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="channel" value="DEFAULT" />
+      <option name="command" value="test" />
+      <option name="nocapture" value="true" />
+      <option name="backtrace" value="SHORT" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$/the-blue-alliance" />
       <envs />
     </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
@@ -276,6 +272,15 @@
       <properties />
       <listeners />
     </configuration>
+    <list>
+      <item itemvalue="Cargo Command.Unnamed" />
+      <item itemvalue="Cargo Command.test [the-blue-alliance]" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Cargo Command.test [the-blue-alliance]" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -292,7 +297,35 @@
       <option name="project" value="LOCAL" />
       <updated>1529108106143</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Caching finally works.&#10;&#10;Gave up on futures because they are evil.&#10;For #1.">
+      <created>1529332306906</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1529332306906</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Caching finally works.&#10;&#10;Gave up on futures because they are evil.&#10;For #1.">
+      <created>1529332396146</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1529332396146</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Travis stuff.">
+      <created>1529332420746</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1529332420746</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Fixed docs.">
+      <created>1529332921699</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1529332921699</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -301,16 +334,16 @@
     <layout>
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="right" id="Cargo" order="3" />
+      <window_info anchor="right" id="Cargo" order="3" visible="true" weight="0.3294621" />
       <window_info anchor="bottom" id="Messages" order="7" weight="0.32997763" />
       <window_info anchor="right" id="Palette&#9;" order="3" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50061125" side_tool="true" visible="true" weight="0.32885906" />
       <window_info anchor="right" id="Maven Projects" order="3" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.32885906" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32885906" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49938875" visible="true" weight="0.32885906" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Designer" order="2" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49888143" visible="true" weight="0.2591687" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49888143" visible="true" weight="0.2591687" />
       <window_info id="Structure" order="1" sideWeight="0.50111854" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info id="UI Designer" order="2" />
@@ -390,7 +423,9 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Began rewrite for a futures-based api.&#10;&#10;Headaches inbound..." />
     <MESSAGE value="Caching finally works.&#10;&#10;Gave up on futures because they are evil.&#10;For #1." />
-    <option name="LAST_COMMIT_MESSAGE" value="Caching finally works.&#10;&#10;Gave up on futures because they are evil.&#10;For #1." />
+    <MESSAGE value="Travis stuff." />
+    <MESSAGE value="Fixed docs." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed docs." />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/the-blue-alliance/src/lib.rs">
@@ -689,24 +724,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="14" column="39" selection-start-line="14" selection-start-column="39" selection-end-line="14" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/the-blue-alliance/src/district.rs">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
           <caret line="2" column="19" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/the-blue-alliance/src/lib.rs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
-          <caret line="81" column="9" lean-forward="true" selection-start-line="81" selection-start-column="9" selection-end-line="81" selection-end-column="9" />
         </state>
       </provider>
     </entry>
@@ -719,8 +740,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/the-blue-alliance/src/cache.rs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1168">
-          <caret line="108" column="20" selection-start-line="108" selection-start-column="20" selection-end-line="108" selection-end-column="20" />
+        <state relative-caret-position="80">
+          <caret line="44" column="42" lean-forward="true" selection-start-line="44" selection-start-column="42" selection-end-line="44" selection-end-column="42" />
           <folding>
             <element signature="e#3225#3226#0" expanded="true" />
             <element signature="e#3262#3263#0" expanded="true" />
@@ -745,6 +766,20 @@
             <element signature="e#4417#4418#0" expanded="true" />
             <element signature="e#4462#4463#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="39" selection-start-line="14" selection-start-column="39" selection-end-line="14" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/the-blue-alliance/src/lib.rs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="50" column="3" selection-start-line="50" selection-start-column="3" selection-end-line="50" selection-end-column="3" />
         </state>
       </provider>
     </entry>
