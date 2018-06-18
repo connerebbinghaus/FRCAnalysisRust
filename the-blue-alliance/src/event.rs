@@ -4,7 +4,7 @@ use ::team::Team;
 use ::matches::Match;
 use chrono::NaiveDate;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum WebcastType{
     #[serde(rename = "youtube")]
     YouTube,
@@ -22,7 +22,7 @@ pub enum WebcastType{
     Livestream
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Webcast {
     #[serde(rename = "type")]
     pub cast_type: WebcastType,
@@ -30,7 +30,7 @@ pub struct Webcast {
     pub file: Option<String>
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Event {
     pub key: String,
     pub name: String,
@@ -87,7 +87,7 @@ impl Event {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct EventSimple {
     pub key: String,
     pub name: String,

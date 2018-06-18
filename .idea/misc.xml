@@ -2,7 +2,7 @@
 <project version="4">
   <component name="CargoProjects">
     <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
-    <cargoProject FILE="$PROJECT_DIR$/TheBlueAlliance/Cargo.toml" />
+    <cargoProject FILE="$PROJECT_DIR$/the-blue-alliance/Cargo.toml" />
   </component>
   <component name="ProjectRootManager">
     <output url="file://$PROJECT_DIR$/out" />

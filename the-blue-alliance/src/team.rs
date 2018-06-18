@@ -3,7 +3,7 @@ use ::district::District;
 use ::event::Event;
 use std::collections::HashMap;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct MatchAlliance {
     pub score: i32,
     pub team_keys: [String; 3],
@@ -11,16 +11,16 @@ pub struct MatchAlliance {
     pub dq_team_keys: Option<Vec<String>>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Alliances {
     pub red: MatchAlliance,
     pub blue: MatchAlliance
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Team {
     pub key: String,
-    pub number: i32,
+    pub team_number: i32,
     pub nickname: Option<String>,
     pub city: Option<String>,
     pub state_prov: Option<String>,
@@ -39,32 +39,32 @@ pub struct Team {
 }
 
 impl Team {
-    pub fn from_key(mut tba: TBA, key: &str) -> Result<Vec<Team>> {
+    pub fn from_key(tba: &mut TBA, key: &str) -> Result<Team> {
         tba.get("/team/".to_owned() + key)
     }
-    pub fn all(mut tba: TBA, page: u32) -> Result<Vec<Team>> {
+    pub fn all(tba: &mut TBA, page: u32) -> Result<Vec<Team>> {
         tba.get("/teams/".to_owned() + &page.to_string())
     }
 
-    pub fn in_year(mut tba: TBA, year:u32, page: u32) -> Result<Vec<Team>> {
+    pub fn in_year(tba: &mut TBA, year:u32, page: u32) -> Result<Vec<Team>> {
         assert_eq!(year.to_string().len(), 4);
         tba.get("/teams/".to_owned() + &year.to_string() + "/" +& page.to_string())
     }
 
-    pub fn years_participated(&self, mut tba: TBA) -> Result<Vec<u32>> {
+    pub fn years_participated(&self, tba: &mut TBA) -> Result<Vec<u32>> {
         tba.get("/team/".to_owned() + &self.key + "/years_participated")
     }
 
-    pub fn districts(&self, mut tba: TBA) -> Result<Vec<District>> {
+    pub fn districts(&self, tba: &mut TBA) -> Result<Vec<District>> {
         tba.get("/team/".to_owned() + &self.key + "/districts")
     }
 
-    pub fn events(&self, mut tba: TBA) -> Result<Vec<Event>> {
+    pub fn events(&self, tba: &mut TBA) -> Result<Vec<Event>> {
         tba.get("/team/".to_owned() + &self.key + "/events")
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct TeamSimple {
     pub key: String,
     pub number: i32,

@@ -1,7 +1,7 @@
 use team::Alliances;
 use ::{TBA, Result};
 
-#[derive(Serialize, Deserialize, Debug, Ord, PartialOrd, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Ord, PartialOrd, Eq, PartialEq, Clone)]
 pub enum CompLevel {
     #[serde(rename = "qm")]
     QualificationMatch,
@@ -15,7 +15,7 @@ pub enum CompLevel {
     Final
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ScoreBreakdown2015Alliance {
     pub auto_points: i32,
     pub teleop_points: i32,
@@ -43,12 +43,12 @@ pub struct ScoreBreakdown2015Alliance {
     pub robot_set: bool
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum Coopertition {
     None, Unknown, Stack
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ScoreBreakdown2015 {
     pub blue: ScoreBreakdown2015Alliance,
     pub red: ScoreBreakdown2015Alliance,
@@ -56,12 +56,12 @@ pub struct ScoreBreakdown2015 {
     pub coopertition_points: i32
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum Auto2016 {
     Crossed, Reached, None
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ScoreBreakdown2016Alliance {
     #[serde(rename = "autoPoints")]
     pub auto_points: i32,
@@ -132,18 +132,18 @@ pub struct ScoreBreakdown2016Alliance {
     pub position5crossings: i32
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ScoreBreakdown2016 {
     pub blue: ScoreBreakdown2016Alliance,
     pub red: ScoreBreakdown2016Alliance
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum Auto2017 {
     Unknown, Mobility, None
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ScoreBreakdown2017Alliance {
     #[serde(rename = "autoPoints")]
     pub auto_points: i32,
@@ -213,13 +213,13 @@ pub struct ScoreBreakdown2017Alliance {
     pub touchpad_far: i32
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ScoreBreakdown2017 {
     pub blue: ScoreBreakdown2017Alliance,
     pub red: ScoreBreakdown2017Alliance
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ScoreBreakdown2018Alliance {
     #[serde(rename = "adjustPoints")]
     pub adjust_points: i32,
@@ -296,13 +296,13 @@ pub struct ScoreBreakdown2018Alliance {
     pub tba_game_data: String
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ScoreBreakdown2018 {
     pub blue: ScoreBreakdown2018Alliance,
     pub red: ScoreBreakdown2018Alliance
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(untagged)]
 pub enum ScoreBreakdown {
     Year2015(ScoreBreakdown2015),
@@ -311,7 +311,7 @@ pub enum ScoreBreakdown {
     Year2018(ScoreBreakdown2018),
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum VideoType {
     #[serde(rename = "youtube")]
     YouTube,
@@ -319,14 +319,14 @@ pub enum VideoType {
     TBA
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Video {
     pub key: String,
     #[serde(rename = "type")]
     pub video_type: VideoType
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum Winner {
     #[serde(rename = "red")]
     Red,
@@ -336,7 +336,7 @@ pub enum Winner {
     None
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Match {
     pub key: String,
     pub comp_level: CompLevel,
@@ -354,11 +354,11 @@ pub struct Match {
 }
 
 impl Match {
-    pub fn from_key(mut tba: TBA, key: String) -> Result<Match> {
+    pub fn from_key(tba: &mut TBA, key: String) -> Result<Match> {
         tba.get("/match/".to_owned() + &key)
     }
 
-    pub fn from_event(mut tba: TBA, key: String) -> Result<Vec<Match>> {
+    pub fn in_event(tba: &mut TBA, key: String) -> Result<Vec<Match>> {
         tba.get("/event/".to_owned() + &key + "/matches")
     }
 
@@ -373,7 +373,7 @@ impl Match {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct MatchSimple {
     pub key: String,
     pub comp_level: CompLevel,
