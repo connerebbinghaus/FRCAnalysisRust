@@ -1,8 +1,8 @@
 use ::{TBA, Result};
-use ::team::{Team, TeamSimple};
-use ::event::{Event, EventSimple};
+use ::team::Team;
+use ::event::Event;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct District {
     pub abbreviation: String,
     pub display_name: String,
@@ -24,9 +24,9 @@ impl District {
         tba.get("/district/".to_owned() + &self.key + "/teams")
     }
 
-    pub fn teams_simple(&self, tba: &mut TBA) -> Result<Vec<TeamSimple>> {
-        tba.get("/district/".to_owned() + &self.key + "/teams/simple")
-    }
+//    pub fn teams_simple(&self, tba: &mut TBA) -> Result<Vec<TeamSimple>> {
+//        tba.get("/district/".to_owned() + &self.key + "/teams/simple")
+//    }
 
     pub fn team_keys(&self, tba: &mut TBA) -> Result<Vec<String>> {
         tba.get("/district/".to_owned() + &self.key + "/teams/keys")
@@ -36,9 +36,9 @@ impl District {
         tba.get("/district/".to_owned() + &self.key + "/events")
     }
 
-    pub fn events_simple(&self, tba: &mut TBA) -> Result<Vec<EventSimple>> {
-        tba.get("/district/".to_owned() + &self.key + "/events/simple")
-    }
+//    pub fn events_simple(&self, tba: &mut TBA) -> Result<Vec<EventSimple>> {
+//        tba.get("/district/".to_owned() + &self.key + "/events/simple")
+//    }
 
     pub fn event_keys(&self, tba: &mut TBA) -> Result<Vec<String>> {
         tba.get("/district/".to_owned() + &self.key + "/events/keys")

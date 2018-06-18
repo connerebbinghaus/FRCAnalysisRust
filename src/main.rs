@@ -1,12 +1,14 @@
 extern crate the_blue_alliance;
 extern crate core;
-
+extern crate simplelog;
+extern crate log;
 use core::cmp::Ordering;
 use the_blue_alliance::TBA;
 use the_blue_alliance::team::Team;
 use the_blue_alliance::matches::Match;
 
 fn main() {
+    simplelog::SimpleLogger::init(log::LevelFilter::Debug, simplelog::Config::default()).expect("Failed to init logger.");
     let mut tba = TBA::new("WG5pUFbRtNL36CLKw071dPf3gdGeT16ngwuPTWhkQev1pvX2enVnf2hq2oPYtjCH");
 
     let team = Team::from_key(&mut tba, "frc4453").unwrap();

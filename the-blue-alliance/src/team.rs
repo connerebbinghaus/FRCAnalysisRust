@@ -3,7 +3,7 @@ use ::district::District;
 use ::event::Event;
 use std::collections::HashMap;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct MatchAlliance {
     pub score: i32,
     pub team_keys: [String; 3],
@@ -11,13 +11,13 @@ pub struct MatchAlliance {
     pub dq_team_keys: Option<Vec<String>>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Alliances {
     pub red: MatchAlliance,
     pub blue: MatchAlliance
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Team {
     pub key: String,
     pub team_number: i32,
@@ -64,7 +64,7 @@ impl Team {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct TeamSimple {
     pub key: String,
     pub number: i32,

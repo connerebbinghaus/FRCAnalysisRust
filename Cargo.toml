@@ -3,7 +3,11 @@ name = "frc-analysis"
 version = "0.1.0"
 authors = ["Conner Ebbinghaus <connerebbinghaus@gmail.com>"]
 
-[dependencies]
+[workspace]
+members = ["the-blue-alliance"]
 
+[dependencies]
+log = "0.4"
+simplelog = "0.5"
 [dependencies.the-blue-alliance]
 path = "the-blue-alliance"
