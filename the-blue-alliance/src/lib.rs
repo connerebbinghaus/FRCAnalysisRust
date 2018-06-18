@@ -49,7 +49,7 @@ pub type Result<T> = result::Result<T, Error>;
 /// use the_blue_alliance::TBA;
 /// use the_blue_alliance::team::Team;
 ///
-/// let tba = TBA::new("xxxxxxxx"); // Get API key from TBA account page.
+/// let mut tba = TBA::new("WG5pUFbRtNL36CLKw071dPf3gdGeT16ngwuPTWhkQev1pvX2enVnf2hq2oPYtjCH"); // Get API key from TBA account page.
 /// let team = Team::from_key(&mut tba, "frc4453");
 /// assert_eq!(team.unwrap().team_number, 4453);
 /// ```
