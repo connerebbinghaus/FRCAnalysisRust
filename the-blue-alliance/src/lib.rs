@@ -51,7 +51,7 @@ pub type Result<T> = result::Result<T, Error>;
 ///
 /// let tba = TBA::new("xxxxxxxx"); // Get API key from TBA account page.
 /// let team = Team::from_key(&mut tba, "frc4453");
-/// assert_eq!(team.unwrap().number, 4453);
+/// assert_eq!(team.unwrap().team_number, 4453);
 /// ```
 pub struct TBA {
     auth_key: &'static str,
