@@ -19,7 +19,9 @@ pub enum WebcastType{
     #[serde(rename = "rtmp")]
     Rtmp,
     #[serde(rename = "livestream")]
-    Livestream
+    Livestream,
+    #[serde(rename = "dacast")]
+    DaCast,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -65,24 +67,24 @@ pub struct Event {
 }
 
 impl Event {
-    pub fn from_key(mut tba: TBA, key: &str) -> Result<Vec<Event>> {
+    pub fn from_key(tba: &mut TBA, key: &str) -> Result<Vec<Event>> {
         tba.get("/event/".to_owned() + key)
     }
 
-    pub fn for_team_key(mut tba: TBA, team_key: &str) -> Result<Vec<Event>> {
+    pub fn for_team_key(tba: &mut TBA, team_key: &str) -> Result<Vec<Event>> {
         tba.get("/team/".to_owned() + team_key + "/events")
     }
 
-    pub fn in_year(mut tba: TBA, year: i32) -> Result<Vec<Event>> {
+    pub fn in_year(tba: &mut TBA, year: i32) -> Result<Vec<Event>> {
         assert_eq!(year.to_string().len(), 4);
         tba.get("/events/".to_owned() + &year.to_string())
     }
 
-    pub fn teams(&self, mut tba: TBA) -> Result<Vec<Team>>{
+    pub fn teams(&self, tba: &mut TBA) -> Result<Vec<Team>>{
         tba.get("/event/".to_owned() + &self.key + "/teams")
     }
 
-    pub fn matches(&self, mut tba: TBA) -> Result<Vec<Match>>{
+    pub fn matches(&self, tba: &mut TBA) -> Result<Vec<Match>>{
         tba.get("/event/".to_owned() + &self.key + "/matches")
     }
 }

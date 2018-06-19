@@ -2,39 +2,42 @@ extern crate the_blue_alliance;
 extern crate core;
 extern crate simplelog;
 extern crate log;
+extern crate rusty_machine;
+extern crate indicatif;
 use core::cmp::Ordering;
 use the_blue_alliance::TBA;
 use the_blue_alliance::team::Team;
 use the_blue_alliance::matches::Match;
+use rusty_machine::learning::nnet::BCECriterion;
+use rusty_machine::learning::optim::grad_desc::StochasticGD;
+use rusty_machine::learning::nnet::NeuralNet;
+use rusty_machine::learning::toolkit::regularization::Regularization;
+use std::sync::Mutex;
+use std::borrow::BorrowMut;
+use std::thread;
+use std::io;
+use std::io::Write;
+
+const LAYERS: [usize; 5] = [3,5,11,7,3];
 
 fn main() {
+
     simplelog::SimpleLogger::init(log::LevelFilter::Debug, simplelog::Config::default()).expect("Failed to init logger.");
-    let mut tba = TBA::new("WG5pUFbRtNL36CLKw071dPf3gdGeT16ngwuPTWhkQev1pvX2enVnf2hq2oPYtjCH");
+    let mut tba = Mutex::new(TBA::new("WG5pUFbRtNL36CLKw071dPf3gdGeT16ngwuPTWhkQev1pvX2enVnf2hq2oPYtjCH"));
 
-    let team = Team::from_key(&mut tba, "frc4453").unwrap();
-    assert_eq!(team.team_number, 4453);
+    let criterion = BCECriterion::new(Regularization::L2(0.1));
+    let mut nnet = NeuralNet::new(&LAYERS, criterion, StochasticGD::default());
 
-    let mut matches = Match::in_event(&mut tba, "2018migul".to_string()).unwrap();
+    //TODO: Make this not deadlock.
+    let test: Vec<the_blue_alliance::matches::Match> = the_blue_alliance::district::District::in_year(tba.try_lock().expect("Cannot lock TBA struct.").borrow_mut(), 2018).expect("Cannot get districts for year 2018").into_iter().enumerate().flat_map( |(i, district)| {
+        print!("d");
+        io::stdout().flush();
+        district.events(tba.try_lock().expect("Cannot lock TBA struct.").borrow_mut()).expect("Failed to get events for district.").into_iter()
+    }).enumerate().flat_map(|(i, events)| {
+        print!("e");
+        io::stdout().flush();
+        events.matches(tba.try_lock().expect("Cannot lock TBA struct.").borrow_mut()).expect("Failed to get matches for event.").into_iter()
+    }).collect();
 
-    matches.sort_by(|a, b| {
-        match a.comp_level.cmp(&b.comp_level) {
-            Ordering::Less => Ordering::Less,
-            Ordering::Greater => Ordering::Greater,
-            Ordering::Equal => {
-                match a.set_number.cmp(&b.set_number) {
-                    Ordering::Less => Ordering::Less,
-                    Ordering::Greater => Ordering::Greater,
-                    Ordering::Equal => {
-                        a.match_number.cmp(&b.match_number)
-                    },
-                }
-            },
-        }
-    });
 
-    for m in matches {
-        if m.team_keys().unwrap().contains(&&"frc4453".to_string()) {
-            println!("{}", m.key);
-        }
-    }
 }
