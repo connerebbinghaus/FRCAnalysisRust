@@ -11,6 +11,9 @@ log = "0.4"
 simplelog = "0.5"
 rusty-machine = "0.5"
 indicatif="0.9"
-
+futures = "0.1"
+tokio-core = "0.1"
+nalgebra = "0.15"
+itertools = "0.7"
 [dependencies.the-blue-alliance]
 path = "the-blue-alliance"

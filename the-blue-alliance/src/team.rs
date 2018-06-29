@@ -1,7 +1,8 @@
-use ::{TBA, Result};
+use ::TBA;
 use ::district::District;
 use ::event::Event;
 use std::collections::HashMap;
+use hyper::rt::Future;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct MatchAlliance {
@@ -39,28 +40,28 @@ pub struct Team {
 }
 
 impl Team {
-    pub fn from_key(tba: &mut TBA, key: &str) -> Result<Team> {
-        tba.get("/team/".to_owned() + key)
+    pub fn from_key(tba: &TBA, key: &str) -> impl Future<Item = Team, Error = ::Error> {
+        tba.clone().get("/team/".to_owned() + key)
     }
-    pub fn all(tba: &mut TBA, page: u32) -> Result<Vec<Team>> {
-        tba.get("/teams/".to_owned() + &page.to_string())
+    pub fn all(tba: &TBA, page: u32) -> impl Future<Item = Vec<Team>, Error = ::Error> {
+        tba.clone().get("/teams/".to_owned() + &page.to_string())
     }
 
-    pub fn in_year(tba: &mut TBA, year:u32, page: u32) -> Result<Vec<Team>> {
+    pub fn in_year(tba: &TBA, year:u32, page: u32) -> impl Future<Item = Vec<Team>, Error = ::Error> {
         assert_eq!(year.to_string().len(), 4);
-        tba.get("/teams/".to_owned() + &year.to_string() + "/" +& page.to_string())
+        tba.clone().get("/teams/".to_owned() + &year.to_string() + "/" +& page.to_string())
     }
 
-    pub fn years_participated(&self, tba: &mut TBA) -> Result<Vec<u32>> {
-        tba.get("/team/".to_owned() + &self.key + "/years_participated")
+    pub fn years_participated(&self, tba: &TBA) -> impl Future<Item = Vec<u32>, Error = ::Error> {
+        tba.clone().get("/team/".to_owned() + &self.key + "/years_participated")
     }
 
-    pub fn districts(&self, tba: &mut TBA) -> Result<Vec<District>> {
-        tba.get("/team/".to_owned() + &self.key + "/districts")
+    pub fn districts(&self, tba: &TBA) -> impl Future<Item = Vec<District>, Error = ::Error> {
+        tba.clone().get("/team/".to_owned() + &self.key + "/districts")
     }
 
-    pub fn events(&self, tba: &mut TBA) -> Result<Vec<Event>> {
-        tba.get("/team/".to_owned() + &self.key + "/events")
+    pub fn events(&self, tba: &TBA) -> impl Future<Item = Vec<Event>, Error = ::Error> {
+        tba.clone().get("/team/".to_owned() + &self.key + "/events")
     }
 }
 

@@ -1,5 +1,6 @@
 use team::Alliances;
-use ::{TBA, Result};
+use ::TBA;
+use hyper::rt::Future;
 
 #[derive(Serialize, Deserialize, Debug, Ord, PartialOrd, Eq, PartialEq, Clone)]
 pub enum CompLevel {
@@ -354,12 +355,12 @@ pub struct Match {
 }
 
 impl Match {
-    pub fn from_key(tba: &mut TBA, key: String) -> Result<Match> {
-        tba.get("/match/".to_owned() + &key)
+    pub fn from_key(tba: &mut TBA, key: String) -> impl Future<Item = Match, Error = ::Error> {
+        tba.clone().get("/match/".to_owned() + &key)
     }
 
-    pub fn in_event(tba: &mut TBA, key: String) -> Result<Vec<Match>> {
-        tba.get("/event/".to_owned() + &key + "/matches")
+    pub fn in_event(tba: &mut TBA, key: String) ->impl Future<Item = Vec<Match>, Error = ::Error> {
+        tba.clone().get("/event/".to_owned() + &key + "/matches")
     }
 
     pub fn team_keys(&self) -> Option<Vec<&String>> {
@@ -388,11 +389,11 @@ pub struct MatchSimple {
 }
 
 impl MatchSimple {
-    pub fn from_key(mut tba: TBA, key: String) -> Result<Match> {
+    pub fn from_key(tba: TBA, key: String) -> impl Future<Item = Match, Error = ::Error> {
         tba.get("/match/".to_owned() + &key + "/simple")
     }
 
-    pub fn from_event(mut tba: TBA, key: String) -> Result<Vec<Match>> {
+    pub fn from_event(tba: TBA, key: String) -> impl Future<Item = Vec<Match>, Error = ::Error> {
         tba.get("/event/".to_owned() + &key + "/matches/simple")
     }
 }

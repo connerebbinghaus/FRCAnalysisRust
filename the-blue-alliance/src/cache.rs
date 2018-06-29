@@ -4,9 +4,10 @@ use ::event::Event;
 use ::matches::Match;
 use ::chrono::{DateTime, Local};
 use std::collections::HashMap;
-
-
-#[derive(Clone)]
+use serde_json;
+use std::fs::File;
+use std::io::Write;
+#[derive(Serialize, Deserialize, Clone)]
 pub enum CachedData {
     Team(Team),
     Teams(Vec<Team>),
@@ -114,6 +115,7 @@ impl ToInternal<Vec<String>> for CachedData {
     }
 }
 
+#[derive(Serialize, Deserialize)]
 pub struct CachedDataTimed {
     pub data: CachedData,
     pub last_modified: String,
@@ -131,16 +133,31 @@ impl CachedDataTimed {
     }
 }
 
-
+#[derive(Serialize, Deserialize)]
 pub struct CacheStore {
     store: HashMap<String, CachedDataTimed>
 }
 
 impl CacheStore {
     pub fn new() -> CacheStore {
-        CacheStore {
-            store: HashMap::new(),
-        }
+        info!("Loading cache...");
+        match File::open("cache.json") {
+            Err(e) => {
+                warn!("Cannot load cache file: {}", e);
+                None
+            },
+            Ok(file) => match serde_json::from_reader(file) {
+                Ok(v) => v,
+                Err(e) => {
+                    warn!("Cannot deserialize cache data: {}", e);
+                    None
+                },
+            },
+        }.or_else(|| {
+            Some(CacheStore {
+                store: HashMap::new(),
+            })
+        }).unwrap()
     }
 
     pub fn cache(&mut self, query: String, data: &ToCache, last_modified: String, expires: DateTime<Local>) {
@@ -152,6 +169,13 @@ impl CacheStore {
     }
 }
 
+impl Drop for CacheStore {
+    fn drop(&mut self) {
+        info!("Saving cache data.");
+        let mut file = File::create("cache.json").unwrap();
+        serde_json::to_writer(file, self).expect("Failed to save cache data");
+    }
+}
 
 pub trait ToCache {
     fn cache(&self) -> CachedData;

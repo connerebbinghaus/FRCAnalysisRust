@@ -1,8 +1,9 @@
-use ::{TBA, Result};
+use ::TBA;
 use ::district::District;
 use ::team::Team;
 use ::matches::Match;
 use chrono::NaiveDate;
+use hyper::rt::Future;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum WebcastType{
@@ -67,25 +68,25 @@ pub struct Event {
 }
 
 impl Event {
-    pub fn from_key(tba: &mut TBA, key: &str) -> Result<Vec<Event>> {
-        tba.get("/event/".to_owned() + key)
+    pub fn from_key(tba: &TBA, key: &str) -> impl Future<Item = Event, Error = ::Error> {
+        tba.clone().get("/event/".to_owned() + key)
     }
 
-    pub fn for_team_key(tba: &mut TBA, team_key: &str) -> Result<Vec<Event>> {
-        tba.get("/team/".to_owned() + team_key + "/events")
+    pub fn for_team_key(tba: &TBA, team_key: &str) -> impl Future<Item = Vec<Event>, Error = ::Error> {
+        tba.clone().get("/team/".to_owned() + team_key + "/events")
     }
 
-    pub fn in_year(tba: &mut TBA, year: i32) -> Result<Vec<Event>> {
+    pub fn in_year(tba: &TBA, year: i32) -> impl Future<Item = Vec<Event>, Error = ::Error> {
         assert_eq!(year.to_string().len(), 4);
-        tba.get("/events/".to_owned() + &year.to_string())
+        tba.clone().get("/events/".to_owned() + &year.to_string())
     }
 
-    pub fn teams(&self, tba: &mut TBA) -> Result<Vec<Team>>{
-        tba.get("/event/".to_owned() + &self.key + "/teams")
+    pub fn teams(&self, tba: &TBA) -> impl Future<Item = Vec<Team>, Error = ::Error> {
+        tba.clone().get("/event/".to_owned() + &self.key + "/teams")
     }
 
-    pub fn matches(&self, tba: &mut TBA) -> Result<Vec<Match>>{
-        tba.get("/event/".to_owned() + &self.key + "/matches")
+    pub fn matches(&self, tba: &TBA) -> impl Future<Item = Vec<Match>, Error = ::Error> {
+        tba.clone().get("/event/".to_owned() + &self.key + "/matches")
     }
 }
 
