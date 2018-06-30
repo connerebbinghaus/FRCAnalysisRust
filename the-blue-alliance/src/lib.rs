@@ -12,7 +12,7 @@ extern crate chrono;
 extern crate cache_control;
 extern crate time;
 extern crate http;
-extern crate rmp_serde;
+extern crate serde_cbor;
 
 use futures::future;
 use hyper_tls::HttpsConnector;
@@ -21,7 +21,6 @@ use hyper::client::HttpConnector;
 use hyper::Request;
 use serde::de::Deserialize;
 use hyper::rt::{Future, Stream};
-use std::result;
 
 pub mod matches;
 pub mod team;
@@ -31,7 +30,6 @@ mod cache;
 
 use cache::ToInternal;
 use std::sync::RwLock;
-use futures::future::Either;
 use std::rc::Rc;
 
 const BASE_URL: &str = "https://www.thebluealliance.com/api/v3";
@@ -105,26 +103,32 @@ impl TBA {
                 .method(hyper::Method::GET)
                 .uri(String::from(BASE_URL) + &url)
                 .header("X-TBA-Auth-Key", self.0.auth_key)
-                .header::<&str, &str>("Last-Modified", cache.last_modified.clone().as_ref()).body(hyper::Body::empty()),
+                .header::<&str, &str>("If-Modified-Since", cache.last_modified.clone().as_ref()).body(hyper::Body::empty()),
         }.expect("Failed to construct request.");
+
+        debug!("Headers: {:?}", request.headers());
 
         let (mut head_keep, _) = http::response::Response::builder().body(hyper::body::Body::empty()).expect("Cannot create empty response to initialize head_keep.").into_parts();
 
         let request_future = self.0.client.request(request).map_err(|e| Error::Hyper(e))
             .and_then(move |res| {
                 debug!("Response: {}", res.status());
+                if res.status() == 304 {
+                    return Box::new(future::ok(self.0.cache.read().unwrap().query(url.clone()).unwrap().data.clone().into_internal()))
+                        as Box<future::Future<Item = T, Error = Error>>;
+                }
                 let (head, body) = res.into_parts();
                 head_keep = head;
-                body.fold(Vec::new(), |mut v, chunk| {
+                Box::new(body.fold(Vec::new(), |mut v, chunk| {
                     v.extend(&chunk[..]);
                     future::ok::<_, hyper::Error>(v)
                 }).map_err(|e| Error::Hyper(e)).and_then(|chunks| {
-                    debug!("Data: {}", String::from_utf8(chunks.clone()).expect("The program crashed while trying to print a debug message, which is stupid."));
+                    //debug!("Data: {}", String::from_utf8(chunks.clone()).expect("The program crashed while trying to print a debug message, which is stupid."));
                     future::result::<_, Error>(TBA::parse_json(chunks).map_err(|e| Error::Json(e)))
                 }).and_then(move |d: T| {
                     self.0.cache.write().unwrap().cache(url, &d, head_keep.headers.get("Last-Modified").expect("Cannot get Last-Modified header.").to_str().expect("Cannot convert Last-Modified header value to string").to_string(), chrono::Local::now() + cache_control::CacheControl::from_value(head_keep.headers.get("Cache-Control").expect("Cannot get Cache-Control header.").to_str().expect("Cannot convert Cache-Control header value to string")).expect("Cannot parse Cache-Control header").max_age.expect("Cache-Control header does not contain max-age value"));
                     future::ok(d)
-                })
+                })) as Box<future::Future<Item = T, Error = Error>>
             });
 
 

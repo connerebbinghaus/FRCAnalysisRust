@@ -4,9 +4,10 @@ use ::event::Event;
 use ::matches::Match;
 use ::chrono::{DateTime, Local};
 use std::collections::HashMap;
-use serde_json;
+use serde_cbor;
 use std::fs::File;
 use std::io::Write;
+use std::error::Error;
 #[derive(Serialize, Deserialize, Clone)]
 pub enum CachedData {
     Team(Team),
@@ -141,12 +142,12 @@ pub struct CacheStore {
 impl CacheStore {
     pub fn new() -> CacheStore {
         info!("Loading cache...");
-        match File::open("cache.json") {
+        match File::open("cache.bin") {
             Err(e) => {
                 warn!("Cannot load cache file: {}", e);
                 None
             },
-            Ok(file) => match serde_json::from_reader(file) {
+            Ok(file) => match serde_cbor::from_reader(file) {
                 Ok(v) => v,
                 Err(e) => {
                     warn!("Cannot deserialize cache data: {}", e);
@@ -172,8 +173,8 @@ impl CacheStore {
 impl Drop for CacheStore {
     fn drop(&mut self) {
         info!("Saving cache data.");
-        let mut file = File::create("cache.json").unwrap();
-        serde_json::to_writer(file, self).expect("Failed to save cache data");
+        let mut file = File::create("cache.bin").unwrap();
+        serde_cbor::to_writer(&mut file, &self).expect("Failed to serialize cache");
     }
 }
 

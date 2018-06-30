@@ -374,6 +374,16 @@ impl Match {
     }
 }
 
+impl PartialOrd<Match> for Match {
+    fn partial_cmp(&self, other: &Match) -> Option<Ordering> {
+        match self.comp_level.cmp(&other.comp_level) {
+            Ordering::Less => Ordering::Less,
+            Ordering::Equal => self.match_number.cmp(&other.match_number),
+            Ordering::Greater => Ordering::Greater,
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct MatchSimple {
     pub key: String,

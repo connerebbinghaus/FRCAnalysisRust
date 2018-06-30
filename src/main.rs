@@ -14,23 +14,17 @@ use rusty_machine::learning::nnet::BCECriterion;
 use rusty_machine::learning::optim::grad_desc::StochasticGD;
 use rusty_machine::learning::nnet::NeuralNet;
 use rusty_machine::learning::toolkit::regularization::Regularization;
-use std::sync::Mutex;
-use std::borrow::BorrowMut;
 use std::io;
 use std::io::Write;
-use itertools::Itertools;
 
 const LAYERS: [usize; 5] = [3,5,11,7,3];
 use futures::{Future, Stream};
-use rusty_machine::linalg::Matrix;
-use the_blue_alliance::matches::CompLevel;
 
 mod simulation;
-use simulation::opr::calc_oprs_for_matches;
 fn main() {
     let mut log_conf = simplelog::Config::default();
     log_conf.target = Some(log::Level::Error);
-    simplelog::SimpleLogger::init(log::LevelFilter::Debug, log_conf).expect("Failed to init logger.");
+    simplelog::SimpleLogger::init(log::LevelFilter::Info, log_conf).expect("Failed to init logger.");
     let tba = TBA::new("WG5pUFbRtNL36CLKw071dPf3gdGeT16ngwuPTWhkQev1pvX2enVnf2hq2oPYtjCH");
 
     let criterion = BCECriterion::new(Regularization::L2(0.1));
