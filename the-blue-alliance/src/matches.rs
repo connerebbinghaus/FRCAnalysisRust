@@ -1,6 +1,8 @@
 use team::Alliances;
 use ::TBA;
-use hyper::rt::Future;
+use std::cmp::Ordering;
+use futures::future;
+use Error;
 
 #[derive(Serialize, Deserialize, Debug, Ord, PartialOrd, Eq, PartialEq, Clone)]
 pub enum CompLevel {
@@ -306,10 +308,10 @@ pub struct ScoreBreakdown2018 {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(untagged)]
 pub enum ScoreBreakdown {
-    Year2015(ScoreBreakdown2015),
-    Year2016(ScoreBreakdown2016),
-    Year2017(ScoreBreakdown2017),
-    Year2018(ScoreBreakdown2018),
+    Year2015(Box<ScoreBreakdown2015>),
+    Year2016(Box<ScoreBreakdown2016>),
+    Year2017(Box<ScoreBreakdown2017>),
+    Year2018(Box<ScoreBreakdown2018>),
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -355,12 +357,12 @@ pub struct Match {
 }
 
 impl Match {
-    pub fn from_key(tba: &mut TBA, key: String) -> impl Future<Item = Match, Error = ::Error> {
-        tba.clone().get("/match/".to_owned() + &key)
+    pub fn from_key(tba: &mut TBA, key: &str) -> impl future::Future<Error = Error, Item = Box<Match>> + Send{
+        tba.get("/match/".to_owned() + key)
     }
 
-    pub fn in_event(tba: &mut TBA, key: String) ->impl Future<Item = Vec<Match>, Error = ::Error> {
-        tba.clone().get("/event/".to_owned() + &key + "/matches")
+    pub fn in_event(tba: &mut TBA, key: &str) -> impl future::Future<Error = Error, Item = Vec<Match>> + Send{
+        tba.get("/event/".to_owned() + key + "/matches")
     }
 
     pub fn team_keys(&self) -> Option<Vec<&String>> {
@@ -370,17 +372,33 @@ impl Match {
             ret.extend(&alliances.red.team_keys[..]);
             return Some(ret);
         }
-        return None;
+        None
     }
+}
+
+impl PartialEq<Match> for Match {
+    fn eq(&self, other: &Match) -> bool {
+        self.key == other.key
+    }
+}
+
+impl Eq for Match {
+
 }
 
 impl PartialOrd<Match> for Match {
     fn partial_cmp(&self, other: &Match) -> Option<Ordering> {
-        match self.comp_level.cmp(&other.comp_level) {
+        Some(match self.comp_level.cmp(&other.comp_level) {
             Ordering::Less => Ordering::Less,
             Ordering::Equal => self.match_number.cmp(&other.match_number),
             Ordering::Greater => Ordering::Greater,
-        }
+        })
+    }
+}
+
+impl Ord for Match {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.partial_cmp(other).unwrap()
     }
 }
 
@@ -399,11 +417,11 @@ pub struct MatchSimple {
 }
 
 impl MatchSimple {
-    pub fn from_key(tba: TBA, key: String) -> impl Future<Item = Match, Error = ::Error> {
-        tba.get("/match/".to_owned() + &key + "/simple")
-    }
-
-    pub fn from_event(tba: TBA, key: String) -> impl Future<Item = Vec<Match>, Error = ::Error> {
-        tba.get("/event/".to_owned() + &key + "/matches/simple")
-    }
+//    pub fn from_key(tba: TBA, key: String) -> impl future::Future<Error = futures::future::SharedError<Error>, Item = futures::future::SharedItem<MatchSimple>> + Send{
+//        tba.get("/match/".to_owned() + &key + "/simple")
+//    }
+//
+//    pub fn from_event(tba: TBA, key: String) -> impl future::Future<Error = futures::future::SharedError<Error>, Item = futures::future::SharedItem<Vec<MatchSimple>>> + Send{
+//        tba.get("/event/".to_owned() + &key + "/matches/simple")
+//    }
 }

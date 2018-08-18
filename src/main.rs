@@ -1,72 +1,68 @@
+#![warn(unused_extern_crates)]
+
 extern crate the_blue_alliance;
-extern crate simplelog;
+extern crate pretty_env_logger;
 #[macro_use]
 extern crate log;
 extern crate rusty_machine;
-extern crate indicatif;
 extern crate futures;
-extern crate tokio_core;
+extern crate futures_cpupool;
 extern crate nalgebra;
 extern crate itertools;
 
 use the_blue_alliance::TBA;
-use rusty_machine::learning::nnet::BCECriterion;
-use rusty_machine::learning::optim::grad_desc::StochasticGD;
-use rusty_machine::learning::nnet::NeuralNet;
-use rusty_machine::learning::toolkit::regularization::Regularization;
-use std::io;
-use std::io::Write;
-
-const LAYERS: [usize; 5] = [3,5,11,7,3];
 use futures::{Future, Stream};
+use simulation::simulate;
 
 mod simulation;
+
 fn main() {
-    let mut log_conf = simplelog::Config::default();
-    log_conf.target = Some(log::Level::Error);
-    simplelog::SimpleLogger::init(log::LevelFilter::Info, log_conf).expect("Failed to init logger.");
-    let tba = TBA::new("WG5pUFbRtNL36CLKw071dPf3gdGeT16ngwuPTWhkQev1pvX2enVnf2hq2oPYtjCH");
+    pretty_env_logger::init();
 
-    let criterion = BCECriterion::new(Regularization::L2(0.1));
-    let mut nnet = NeuralNet::new(&LAYERS, criterion, StochasticGD::default());
-    let mut event_loop = tokio_core::reactor::Core::new()
-        .expect("Cannot setup tokio core");
+    let pool = futures_cpupool::Builder::new()
+        .after_start(|| debug!("Worker started."))
+        .create();
 
-    let data = event_loop.run(the_blue_alliance::district::District::in_year(&tba, 2018).into_stream()
-        .map( |districts| {
-            futures::stream::iter_ok(districts.into_iter())
-        })
-        .flatten()
-        .map(|district| {
-            print!("d");
-            io::stdout().flush();
-            district.events(&tba).into_stream()
-        })
-        .flatten()
-        .map(|events| futures::stream::iter_ok::<_, the_blue_alliance::Error>(events.into_iter()))
-        .flatten()
-        .map(|event| {
-            print!("e");
-            io::stdout().flush();
-            event.matches(&tba).into_stream()
-        })
-        .flatten()
-        .map(|matches| (matches.first().unwrap().clone(), simulation::opr::calc_oprs_for_matches(matches)))
-        .collect()).unwrap();
+    let tba = TBA::new("WG5pUFbRtNL36CLKw071dPf3gdGeT16ngwuPTWhkQev1pvX2enVnf2hq2oPYtjCH", pool.clone());
+
+    let districts_stream = futures::sync::mpsc::spawn(
+        the_blue_alliance::district::District::in_year(&tba, 2018).into_stream()
+            .map(|districts| futures::stream::iter_ok::<_, the_blue_alliance::Error>(districts.into_iter()))
+            .flatten(),
+        &pool, 3);
+
+    let tba1 = tba.clone();
+
+    let events_stream = futures::sync::mpsc::spawn(
+        districts_stream
+            .map(move |district| district.events(&tba1).into_stream())
+            .flatten()
+            .map(|events| futures::stream::iter_ok::<_, the_blue_alliance::Error>(events.into_iter()))
+            .flatten()
+        , &pool, 10);
+
+    let tba2 = tba.clone();
+
+    let matches_stream = futures::sync::mpsc::spawn(
+        simulate(events_stream
+            .map(move |event| (event.clone(), event.matches(&tba2).wait().unwrap()))
+            .map(|(event, mut matches)| {
+                matches.sort();
+                (event, matches)
+            }))
+        , &pool, 25);
 
 
 
-    println!();
-
-    data.into_iter().for_each(|(a_match, oprs)| {
-        println!("{}:", a_match.key);
-        if let Some(oprs) = oprs {
-            for (team, opr) in oprs {
-                println!("{}: {}", team, opr);
+    let fut = matches_stream.collect();
+    let res = fut.wait().unwrap();
+    for event in res {
+        for a_match in event.matches {
+            println!("{}", a_match.inner.key);
+            for team in a_match.states.values() {
+                println!("\t {}: {}, {}, {}, {}", team.team_key, team.wins, team.losses, team.ties, team.opr);
             }
         }
-        else {
-            println!("N/A");
-        }
-    });
+    }
+    println!("Done!")
 }

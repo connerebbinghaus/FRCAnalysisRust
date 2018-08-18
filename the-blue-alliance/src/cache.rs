@@ -6,17 +6,15 @@ use ::chrono::{DateTime, Local};
 use std::collections::HashMap;
 use serde_cbor;
 use std::fs::File;
-use std::io::Write;
-use std::error::Error;
 #[derive(Serialize, Deserialize, Clone)]
 pub enum CachedData {
-    Team(Team),
+    Team(Box<Team>),
     Teams(Vec<Team>),
     District(District),
     Districts(Vec<District>),
-    Event(Event),
+    Event(Box<Event>),
     Events(Vec<Event>),
-    Match(Match),
+    Match(Box<Match>),
     Matches(Vec<Match>),
     Years(Vec<u32>),
     Keys(Vec<String>),
@@ -26,8 +24,8 @@ pub trait ToInternal<T> {
     fn into_internal(self) -> T;
 }
 
-impl ToInternal<Team> for CachedData {
-    fn into_internal(self) -> Team {
+impl ToInternal<Box<Team>> for CachedData {
+    fn into_internal(self) -> Box<Team> {
         match self {
             CachedData::Team(t) => t,
             _ => panic!(),
@@ -62,8 +60,8 @@ impl ToInternal<Vec<District>> for CachedData {
     }
 }
 
-impl ToInternal<Event> for CachedData {
-    fn into_internal(self) -> Event {
+impl ToInternal<Box<Event>> for CachedData {
+    fn into_internal(self) -> Box<Event> {
         match self {
             CachedData::Event(t) => t,
             _ => panic!(),
@@ -80,8 +78,8 @@ impl ToInternal<Vec<Event>> for CachedData {
     }
 }
 
-impl ToInternal<Match> for CachedData {
-    fn into_internal(self) -> Match {
+impl ToInternal<Box<Match>> for CachedData {
+    fn into_internal(self) -> Box<Match> {
         match self {
             CachedData::Match(t) => t,
             _ => panic!(),
@@ -124,7 +122,7 @@ pub struct CachedDataTimed {
 }
 
 impl CachedDataTimed {
-    fn cache(cacheable: &ToCache, last_modified: String, expires: DateTime<Local>) -> CachedDataTimed {
+    fn cache<C: ToCache>(cacheable: C, last_modified: String, expires: DateTime<Local>) -> CachedDataTimed {
         let data= cacheable.cache();
         CachedDataTimed {
             data,
@@ -161,12 +159,12 @@ impl CacheStore {
         }).unwrap()
     }
 
-    pub fn cache(&mut self, query: String, data: &ToCache, last_modified: String, expires: DateTime<Local>) {
+    pub fn cache<C: ToCache>(&mut self, query: String, data: C, last_modified: String, expires: DateTime<Local>) {
         self.store.insert(query, CachedDataTimed::cache(data, last_modified, expires));
     }
 
-    pub fn query(&self, query: String) -> Option<&CachedDataTimed> {
-        self.store.get(&query)
+    pub fn query(&self, query: &str) -> Option<&CachedDataTimed> {
+        self.store.get(query)
     }
 }
 
@@ -179,65 +177,65 @@ impl Drop for CacheStore {
 }
 
 pub trait ToCache {
-    fn cache(&self) -> CachedData;
+    fn cache(self) -> CachedData;
 }
 
-impl ToCache for Team {
-    fn cache(&self) -> CachedData {
-        CachedData::Team(self.clone())
+impl ToCache for Box<Team> {
+    fn cache(self) -> CachedData {
+        CachedData::Team(self)
     }
 }
 
 impl ToCache for Vec<Team> {
-    fn cache(&self) -> CachedData {
-        CachedData::Teams(self.clone())
+    fn cache(self) -> CachedData {
+        CachedData::Teams(self)
     }
 }
 
 impl ToCache for District {
-    fn cache(&self) -> CachedData {
-        CachedData::District(self.clone())
+    fn cache(self) -> CachedData {
+        CachedData::District(self)
     }
 }
 
 impl ToCache for Vec<District> {
-    fn cache(&self) -> CachedData {
-        CachedData::Districts(self.clone())
+    fn cache(self) -> CachedData {
+        CachedData::Districts(self)
     }
 }
 
-impl ToCache for Event {
-    fn cache(&self) -> CachedData {
-        CachedData::Event(self.clone())
+impl ToCache for Box<Event> {
+    fn cache(self) -> CachedData {
+        CachedData::Event(self)
     }
 }
 
 impl ToCache for Vec<Event> {
-    fn cache(&self) -> CachedData {
-        CachedData::Events(self.clone())
+    fn cache(self) -> CachedData {
+        CachedData::Events(self)
     }
 }
 
-impl ToCache for Match {
-    fn cache(&self) -> CachedData {
-        CachedData::Match(self.clone())
+impl ToCache for Box<Match> {
+    fn cache(self) -> CachedData {
+        CachedData::Match(self)
     }
 }
 
 impl ToCache for Vec<Match> {
-    fn cache(&self) -> CachedData {
-        CachedData::Matches(self.clone())
+    fn cache(self) -> CachedData {
+        CachedData::Matches(self)
     }
 }
 
 impl ToCache for Vec<u32> {
-    fn cache(&self) -> CachedData {
-        CachedData::Years(self.clone())
+    fn cache(self) -> CachedData {
+        CachedData::Years(self)
     }
 }
 
 impl ToCache for Vec<String> {
-    fn cache(&self) -> CachedData {
-        CachedData::Keys(self.clone())
+    fn cache(self) -> CachedData {
+        CachedData::Keys(self)
     }
 }

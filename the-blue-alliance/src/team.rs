@@ -2,7 +2,8 @@ use ::TBA;
 use ::district::District;
 use ::event::Event;
 use std::collections::HashMap;
-use hyper::rt::Future;
+use futures::future;
+use Error;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct MatchAlliance {
@@ -40,28 +41,29 @@ pub struct Team {
 }
 
 impl Team {
-    pub fn from_key(tba: &TBA, key: &str) -> impl Future<Item = Team, Error = ::Error> {
-        tba.clone().get("/team/".to_owned() + key)
-    }
-    pub fn all(tba: &TBA, page: u32) -> impl Future<Item = Vec<Team>, Error = ::Error> {
-        tba.clone().get("/teams/".to_owned() + &page.to_string())
+    pub fn from_key(tba: &TBA, key: &str) -> impl future::Future<Error = Error, Item = Box<Team>> + Send{
+        tba.get("/team/".to_owned() + key)
     }
 
-    pub fn in_year(tba: &TBA, year:u32, page: u32) -> impl Future<Item = Vec<Team>, Error = ::Error> {
+    pub fn all(tba: &TBA, page: u32) -> impl future::Future<Error = Error, Item = Vec<Team>> + Send{
+        tba.get("/teams/".to_owned() + &page.to_string())
+    }
+
+    pub fn in_year(tba: &TBA, year:u32, page: u32) -> impl future::Future<Error = Error, Item = Vec<Team>> + Send{
         assert_eq!(year.to_string().len(), 4);
-        tba.clone().get("/teams/".to_owned() + &year.to_string() + "/" +& page.to_string())
+        tba.get("/teams/".to_owned() + &year.to_string() + "/" +& page.to_string())
     }
 
-    pub fn years_participated(&self, tba: &TBA) -> impl Future<Item = Vec<u32>, Error = ::Error> {
-        tba.clone().get("/team/".to_owned() + &self.key + "/years_participated")
+    pub fn years_participated(&self, tba: &TBA) -> impl future::Future<Error = Error, Item = Vec<u32>> + Send{
+        tba.get("/team/".to_owned() + &self.key + "/years_participated")
     }
 
-    pub fn districts(&self, tba: &TBA) -> impl Future<Item = Vec<District>, Error = ::Error> {
-        tba.clone().get("/team/".to_owned() + &self.key + "/districts")
+    pub fn districts(&self, tba: &TBA) -> impl future::Future<Error = Error, Item = Vec<District>> + Send{
+        tba.get("/team/".to_owned() + &self.key + "/districts")
     }
 
-    pub fn events(&self, tba: &TBA) -> impl Future<Item = Vec<Event>, Error = ::Error> {
-        tba.clone().get("/team/".to_owned() + &self.key + "/events")
+    pub fn events(&self, tba: &TBA) -> impl future::Future<Error = Error, Item = Vec<Event>> + Send{
+        tba.get("/team/".to_owned() + &self.key + "/events")
     }
 }
 
