@@ -329,7 +329,7 @@ pub struct Video {
     pub video_type: VideoType
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
 pub enum Winner {
     #[serde(rename = "red")]
     Red,

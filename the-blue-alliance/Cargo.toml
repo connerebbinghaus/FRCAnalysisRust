@@ -16,6 +16,4 @@ cache_control = "0.1.0"
 http = "0.1"
 serde_cbor = "0.8"
 smallvec = "0.6"
-
-[profile.release]
-debug = true
+time = "0.1"

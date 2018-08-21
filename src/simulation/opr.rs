@@ -1,8 +1,32 @@
 use nalgebra::*;
 use itertools::{chain, Itertools};
 use the_blue_alliance::matches::Match;
+use std::collections::HashMap;
 
-pub fn calc_oprs_for_matches(matches: &[Match]) -> Option<Vec<(String, f32)>> {
+#[derive(Clone, Debug)]
+pub enum Oprs {
+    Reliable(HashMap<String, f32>),
+    Unreliable(HashMap<String, f32>),
+}
+
+impl Oprs {
+    pub fn is_reliable(&self) -> bool {
+        match self {
+            Oprs::Reliable(_) => true,
+            Oprs::Unreliable(_) => false,
+        }
+    }
+
+    pub fn unwrap(self) -> HashMap<String, f32> {
+        match self {
+            Oprs::Reliable(dat) => dat,
+            Oprs::Unreliable(dat) => dat,
+        }
+    }
+}
+
+
+pub fn calc_oprs_for_matches(matches: &[Match]) -> Option<Oprs> {
     if matches.is_empty() {
         return None;
     }
@@ -11,6 +35,8 @@ pub fn calc_oprs_for_matches(matches: &[Match]) -> Option<Vec<(String, f32)>> {
         m.score_breakdown.is_some()
         && m.alliances.is_some()
     }).collect::<Vec<_>>();
+
+    let num_usable_matches = usable_matches.len();
 
     trace!("Getting all teams...");
     let teams = usable_matches.iter().flat_map(|a_match| {
@@ -62,9 +88,19 @@ pub fn calc_oprs_for_matches(matches: &[Match]) -> Option<Vec<(String, f32)>> {
     let decomp = matrix.qr();
     debug!("Solving...");
     match decomp.solve(&scores) {
-        Some(solution) => Some(teams.into_iter().zip(solution.into_iter()).map(|(s, v)| (s.clone(), *v)).collect()),
+        Some(solution) => {
+            let is_reliable = (num_usable_matches as f32 / teams.len() as f32) > 0.75;
+
+            let data = teams.into_iter().zip(solution.into_iter()).map(|(s, v)| (s.clone(), *v)).collect();
+
+            Some(if is_reliable {
+                Oprs::Reliable(data)
+            } else {
+                Oprs::Unreliable(data)
+            })
+        },
         None => {
-            warn!("Cannot calculate oprs for matches: No solution.");
+            //warn!("Cannot calculate oprs for matches: No solution.");
             None
         }
 

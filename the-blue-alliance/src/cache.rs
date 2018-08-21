@@ -6,6 +6,8 @@ use ::chrono::{DateTime, Local};
 use std::collections::HashMap;
 use serde_cbor;
 use std::fs::File;
+use time::Duration;
+use chrono;
 #[derive(Serialize, Deserialize, Clone)]
 pub enum CachedData {
     Team(Box<Team>),
@@ -118,17 +120,23 @@ impl ToInternal<Vec<String>> for CachedData {
 pub struct CachedDataTimed {
     pub data: CachedData,
     pub last_modified: String,
-    pub expires: DateTime<Local>
+    pub expires: DateTime<Local>,
+    pub expiration_time: i64,
 }
 
 impl CachedDataTimed {
-    fn cache<C: ToCache>(cacheable: C, last_modified: String, expires: DateTime<Local>) -> CachedDataTimed {
+    fn cache<C: ToCache>(cacheable: C, last_modified: String, expires: Duration) -> CachedDataTimed {
         let data= cacheable.cache();
         CachedDataTimed {
             data,
             last_modified,
-            expires,
+            expires: chrono::Local::now() + expires,
+            expiration_time: expires.num_seconds(),
         }
+    }
+
+    pub fn refresh(&mut self) {
+        self.expires = chrono::Local::now() + Duration::seconds(self.expiration_time);
     }
 }
 
@@ -146,7 +154,10 @@ impl CacheStore {
                 None
             },
             Ok(file) => match serde_cbor::from_reader(file) {
-                Ok(v) => v,
+                Ok(v) => {
+                    info!("Cache loaded.");
+                    v
+                },
                 Err(e) => {
                     warn!("Cannot deserialize cache data: {}", e);
                     None
@@ -159,20 +170,27 @@ impl CacheStore {
         }).unwrap()
     }
 
-    pub fn cache<C: ToCache>(&mut self, query: String, data: C, last_modified: String, expires: DateTime<Local>) {
+    pub fn cache<C: ToCache>(&mut self, query: String, data: C, last_modified: String, expires: Duration) {
         self.store.insert(query, CachedDataTimed::cache(data, last_modified, expires));
     }
 
     pub fn query(&self, query: &str) -> Option<&CachedDataTimed> {
         self.store.get(query)
     }
+
+    pub fn refresh(&mut self, query: &str) {
+        if let Some(c) = self.store.get_mut(query) {
+            c.refresh();
+        }
+    }
 }
 
 impl Drop for CacheStore {
     fn drop(&mut self) {
         info!("Saving cache data.");
-        let mut file = File::create("cache.bin").unwrap();
+        let mut file = File::create("cache.bin").expect("Failed to open cache file.");
         serde_cbor::to_writer(&mut file, &self).expect("Failed to serialize cache");
+        info!("Cache data saved.")
     }
 }
 

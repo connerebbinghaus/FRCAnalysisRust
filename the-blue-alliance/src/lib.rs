@@ -14,6 +14,7 @@ extern crate cache_control;
 extern crate http;
 extern crate serde_cbor;
 extern crate smallvec;
+extern crate time;
 
 use futures::future;
 use hyper_tls::HttpsConnector;
@@ -47,22 +48,13 @@ pub enum Error {
 
 
 /// Stores the TBA auth key, HTTP client, and tokio event loop for use in requesting data from the api.
-/// # Examples
-/// ```
-/// extern crate the_blue_alliance;
-/// use the_blue_alliance::TBA;
-/// use the_blue_alliance::team::Team;
-///
-/// let mut tba = TBA::new("WG5pUFbRtNL36CLKw071dPf3gdGeT16ngwuPTWhkQev1pvX2enVnf2hq2oPYtjCH"); // Get API key from TBA account page.
-/// let team = Team::from_key(&mut tba, "frc4453");
-/// assert_eq!(team.unwrap().team_number, 4453);
-/// ```
 pub struct TBARaw {
     auth_key: &'static str,
     client: hyper::Client<HttpsConnector<HttpConnector>>,
     cache: RwLock<cache::CacheStore>,
 }
 
+/// Stores the TBA auth key, HTTP client, and tokio event loop for use in requesting data from the api.
 #[derive(Clone)]
 pub struct TBA(Arc<TBARaw>);
 
@@ -126,6 +118,7 @@ impl TBA {
             .and_then(move |res| {
                 debug!("Response: {}", res.status());
                 let unmodified_future = if res.status() == 304 {
+                    tba.cache.write().unwrap().refresh(url.as_str());
                     future::ok(tba.cache.read().unwrap().query(url.as_str()).unwrap().data.clone().into_internal())
                 } else { future::err(Error::Other("Should not occur")) };
 
@@ -139,7 +132,7 @@ impl TBA {
                     //debug!("Data: {}", String::from_utf8(chunks.clone()).expect("The program crashed while trying to print a debug message, which is stupid."));
                     future::result::<_, Error>(TBA::parse_json(&chunks).map_err(Error::Json))
                 }).and_then(move |d: T| {
-                    tba.cache.write().unwrap().cache(url, d.clone(), head_keep.headers.get("Last-Modified").expect("Cannot get Last-Modified header.").to_str().expect("Cannot convert Last-Modified header value to string").to_string(), chrono::Local::now() + cache_control::CacheControl::from_value(head_keep.headers.get("Cache-Control").expect("Cannot get Cache-Control header.").to_str().expect("Cannot convert Cache-Control header value to string")).expect("Cannot parse Cache-Control header").max_age.expect("Cache-Control header does not contain max-age value"));
+                    tba.cache.write().unwrap().cache(url, d.clone(), head_keep.headers.get("Last-Modified").expect("Cannot get Last-Modified header.").to_str().expect("Cannot convert Last-Modified header value to string").to_string(), cache_control::CacheControl::from_value(head_keep.headers.get("Cache-Control").expect("Cannot get Cache-Control header.").to_str().expect("Cannot convert Cache-Control header value to string")).expect("Cannot parse Cache-Control header").max_age.expect("Cache-Control header does not contain max-age value"));
                     future::ok(d)
                 });
 
