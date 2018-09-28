@@ -1,0 +1,56 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug frc-analysis",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=frc-analysis"
+                ]
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "RUST_LOG": "info"
+            }
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug frc-analysis Release",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--release",
+                    "--bin=frc-analysis"
+                ]
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "RUST_LOG": "info"
+            }
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug tests in frc-analysis",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=frc-analysis"
+                ]
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

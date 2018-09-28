@@ -67,6 +67,12 @@ impl Team {
     }
 }
 
+impl PartialEq<Team> for Team {
+    fn eq(&self, other: &Team) -> bool {
+        self.key == other.key
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct TeamSimple {
     pub key: String,

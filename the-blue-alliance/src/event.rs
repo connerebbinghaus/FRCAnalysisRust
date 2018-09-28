@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 use ::TBA;
 use ::district::District;
 use ::team::Team;
@@ -88,6 +89,26 @@ impl Event {
 
     pub fn matches(&self, tba: &TBA) -> impl future::Future<Error = Error, Item = Vec<Match>> + Send{
         tba.get("/event/".to_owned() + &self.key + "/matches")
+    }
+}
+
+impl PartialEq<Event> for Event {
+    fn eq(&self, other: &Event) -> bool {
+        self.key == other.key
+    }
+}
+
+impl Eq for Event {}
+
+impl PartialOrd<Event> for Event {
+    fn partial_cmp(&self, other: &Event) -> Option<Ordering> {
+        Some(self.start_date.cmp(&other.start_date))
+    }
+}
+
+impl Ord for Event {
+    fn cmp(&self, other: &Event) -> Ordering {
+        self.partial_cmp(other).unwrap()
     }
 }
 

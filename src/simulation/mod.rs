@@ -1,9 +1,11 @@
+use simulation::opr::OprsOwned;
+use std::sync::RwLock;
+use data::{Data, QuerySelect};
 use std::collections::HashMap;
 use the_blue_alliance::matches::Match;
 use the_blue_alliance::team::Alliances;
 use the_blue_alliance::event::Event;
 use std::cmp::Ordering;
-use futures::Stream;
 use std::sync::Mutex;
 use std::sync::Arc;
 
@@ -139,39 +141,22 @@ impl SimulatedMatch {
         }
     }
 }
-
+#[derive(Clone)]
 pub struct SimulatedEvent {
     pub inner: Event,
     pub matches: Vec<SimulatedMatch>
 }
 
 impl SimulatedEvent {
-    fn calc_oprs(&mut self) {
-        let mut prev_matches = Vec::new();
-        for a_match in &mut self.matches {
-            let oprs = opr::calc_oprs_for_matches(&prev_matches);
-            if let Some(oprs) = oprs {
-                let is_reliable = oprs.is_reliable();
-                for (team, opr) in oprs.unwrap() {
-                    a_match.states.entry(team.clone()).and_modify(|state| {
-                        state.is_opr_reliable = is_reliable;
-                        state.opr = opr;
-                    }).or_insert_with(|| {
-                        let mut new_state = TeamState::new(&team);
-                        new_state.opr = opr;
-                        new_state
-                    });
-                }
-            }
-            prev_matches.push(a_match.inner.clone())
-        }
-    }
-}
-
-pub fn simulate<E, F: Stream<Item = (Event, Vec<Match>), Error = E>>(future: F) -> impl Stream<Item = SimulatedEvent, Error = E> {
-    future.map(|(event, mut matches)| {
+    fn simulate(event: Event, data: &Data) -> Option<SimulatedEvent> {
         trace!("Simulating event...");
-        matches.sort();
+        let matches = data.query()
+                        .find_match()
+                        .in_event(&event)
+                        .choose(QuerySelect::All)
+                        .go()
+                        .multiple()?;
+        
         let matches: Vec<_> = matches.into_iter()
             .map(|m| Arc::new(Mutex::new(SimulatedMatch::new(m))))
             .collect();
@@ -195,7 +180,93 @@ pub fn simulate<E, F: Stream<Item = (Event, Vec<Match>), Error = E>>(future: F) 
             matches,
         };
         ret.calc_oprs();
-        ret
-    })
+        Some(ret)
+    }
+
+    fn calc_oprs(&mut self) {
+        let mut prev_matches = Vec::new();
+        for a_match in &mut self.matches {
+            {
+                let oprs = opr::calc_oprs_for_matches(prev_matches.clone());
+                if let Ok(oprs) = oprs {
+                    let is_reliable = oprs.is_reliable();
+                    for (team, opr) in oprs.unwrap() {
+                        a_match.states.entry(team.to_owned()).and_modify(|state| {
+                            state.is_opr_reliable = is_reliable;
+                            state.opr = opr;
+                        }).or_insert_with(|| {
+                            let mut new_state = TeamState::new(&team);
+                            new_state.opr = opr;
+                            new_state
+                        });
+                    }
+                }
+            }
+            prev_matches.push(a_match.inner.clone())
+        }
+    }
 }
 
+pub struct Simulator {
+    cache: Mutex<HashMap<String, SimulatedEvent>>,
+    world_oprs: RwLock<Option<OprsOwned>>,
+}
+
+impl Simulator {
+    pub fn new() -> Simulator {
+        Simulator {
+            cache: Mutex::new(HashMap::new()),
+            world_oprs: RwLock::new(None)
+        }
+    }
+
+    pub fn simulate(&self, data: &Data, the_match: &Match) -> Option<SimulatedMatch> {
+        let mut cache = self.cache.lock().unwrap();
+        let res = {
+            cache.entry(the_match.event_key.clone()).or_insert_with(|| {
+                let event = data.query()
+                    .find_event()
+                    .with_key(the_match.event_key.as_str())
+                    .go()
+                    .single().unwrap();
+                SimulatedEvent::simulate(event, data).unwrap()
+            }).matches.iter().find(|a_match| a_match.inner.key == the_match.key)
+        };
+        match res {
+            Some(r) => Some(r.clone()),
+            None => None,
+        }
+    }
+
+    pub fn simulate_event(&self, data: &Data, event: &Event) -> SimulatedEvent {
+        let mut cache = self.cache.lock().unwrap();
+        let res = {
+            cache.entry(event.key.clone()).or_insert_with(|| {
+                let event = data.query()
+                    .find_event()
+                    .with_key(event.key.as_str())
+                    .go()
+                    .single().unwrap();
+                SimulatedEvent::simulate(event, data).unwrap()
+            })
+        };
+        res.clone()
+    }
+
+    pub fn get_world_oprs(&self, data: &Data) -> OprsOwned {
+        use std::ops::Deref;
+        if let Ok(Some(oprs)) = self.world_oprs.read().map(|v| v.deref().clone()) {
+            oprs
+        } else {
+            let matches = data.query()
+                .find_match()
+                .in_season(2018)
+                .choose(QuerySelect::All)
+                .go().multiple().unwrap();
+            let oprs = opr::calc_oprs_for_matches(matches)
+                .expect("Cannot calculate world oprs");
+            *self.world_oprs.write().unwrap() = Some(oprs.clone());
+            return oprs;
+        }
+    }
+}

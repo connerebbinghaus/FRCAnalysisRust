@@ -11,11 +11,13 @@ log = "0.4"
 pretty_env_logger = "0.2"
 futures = "0.1"
 futures-cpupool = "0.1"
-nalgebra = "0.15"
+nalgebra = "0.16"
 itertools = "0.7"
 num-traits = "0.2"
 fann = "0.1"
 libc = "0.2"
+chrono="0.4"
+
 [dependencies.the-blue-alliance]
 path = "the-blue-alliance"
 

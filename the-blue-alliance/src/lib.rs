@@ -3,7 +3,7 @@
 extern crate hyper;
 #[macro_use]
 extern crate log;
-extern crate hyper_tls;
+extern crate hyper_rustls;
 extern crate futures;
 extern crate serde;
 extern crate serde_json;
@@ -17,7 +17,7 @@ extern crate smallvec;
 extern crate time;
 
 use futures::future;
-use hyper_tls::HttpsConnector;
+use hyper_rustls::HttpsConnector;
 use hyper::Client;
 use hyper::client::HttpConnector;
 use hyper::Request;
@@ -67,7 +67,7 @@ impl TBA {
             auth_key,
             client: Client::builder()
                 .executor(exe)
-                .build(HttpsConnector::new(4).expect("Cannot create HttpsConnector")),
+                .build(HttpsConnector::new(4)),
             cache: RwLock::new(cache::CacheStore::new()),
         }))
     }

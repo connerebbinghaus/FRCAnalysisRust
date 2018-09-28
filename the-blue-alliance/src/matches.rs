@@ -374,6 +374,16 @@ impl Match {
         }
         None
     }
+
+    pub fn team_keys_mut(&mut self) -> Option<Vec<&mut String>> {
+        if let Some(ref mut alliances) = self.alliances {
+            let mut ret = Vec::new();
+            ret.extend(&mut alliances.blue.team_keys[..]);
+            ret.extend(&mut alliances.red.team_keys[..]);
+            return Some(ret);
+        }
+        None
+    }
 }
 
 impl PartialEq<Match> for Match {
