@@ -12,7 +12,7 @@ matrix:
     - rust: nightly
   fast_finish: true
 before_install:
-  - sudo apt-get install -y libfann2
+  - sudo apt-get install -y libfann-dev
 addons:
   apt:
     update: true
