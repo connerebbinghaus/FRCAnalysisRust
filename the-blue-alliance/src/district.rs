@@ -1,8 +1,8 @@
-use ::TBA;
-use ::team::Team;
-use ::event::Event;
+use crate::TBA;
+use crate::team::Team;
+use crate::event::Event;
 use futures::future;
-use Error;
+use crate::Error;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct District {

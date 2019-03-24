@@ -8,18 +8,26 @@ members = ["the-blue-alliance"]
 
 [dependencies]
 log = "0.4"
-pretty_env_logger = "0.2"
+pretty_env_logger = "0.3"
 futures = "0.1"
 futures-cpupool = "0.1"
-nalgebra = "0.16"
-itertools = "0.7"
+nalgebra = "0.17"
+itertools = "0.8"
 num-traits = "0.2"
-fann = "0.1"
+#fann = "0.1"
 libc = "0.2"
-chrono="0.4"
+chrono = "0.4"
+clap = "2.32"
+prettytable-rs="0.8"
+crossterm = "0.7"
 
 [dependencies.the-blue-alliance]
 path = "the-blue-alliance"
+
+[dependencies.tui]
+version = "0.5"
+default-features = false
+features = ["crossterm"]
 
 [profile.release]
 debug = true

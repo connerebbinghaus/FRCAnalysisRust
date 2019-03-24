@@ -1,7 +1,7 @@
-use ::team::Team;
-use ::district::District;
-use ::event::Event;
-use ::matches::Match;
+use crate::team::Team;
+use crate::district::District;
+use crate::event::Event;
+use crate::matches::Match;
 use ::chrono::{DateTime, Local};
 use std::collections::HashMap;
 use serde_cbor;

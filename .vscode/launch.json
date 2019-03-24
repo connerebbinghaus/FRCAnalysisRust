@@ -15,7 +15,7 @@
                     "--bin=frc-analysis"
                 ]
             },
-            "args": [],
+            "args": ["kiosk", "2019miwmi"],
             "cwd": "${workspaceFolder}",
             "env": {
                 "RUST_LOG": "info"

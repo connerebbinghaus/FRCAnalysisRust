@@ -1,9 +1,9 @@
-use ::TBA;
-use ::district::District;
-use ::event::Event;
+use crate::TBA;
+use crate::district::District;
+use crate::event::Event;
 use std::collections::HashMap;
 use futures::future;
-use Error;
+use crate::Error;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct MatchAlliance {

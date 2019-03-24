@@ -5,7 +5,7 @@ authors = ["Conner Ebbinghaus <connerebbinghaus@gmail.com>"]
 
 [dependencies]
 hyper = "0.12"
-hyper-rustls = "0.14"
+hyper-rustls = "0.16"
 futures = "0.1"
 serde = "1.0"
 serde_derive = "1.0"

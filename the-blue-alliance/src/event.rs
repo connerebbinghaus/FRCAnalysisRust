@@ -1,11 +1,11 @@
 use std::cmp::Ordering;
-use ::TBA;
-use ::district::District;
-use ::team::Team;
-use ::matches::Match;
+use crate::TBA;
+use crate::district::District;
+use crate::team::Team;
+use crate::matches::Match;
 use chrono::NaiveDate;
 use futures::future;
-use Error;
+use crate::Error;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub enum WebcastType{
